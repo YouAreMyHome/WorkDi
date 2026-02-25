@@ -1,50 +1,64 @@
-import { Star, MapPin } from 'lucide-react';
+import { NearbyCafe } from '@/lib/api/cafes';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Cafe } from '@/types/schema';
+import { Star, MapPin } from 'lucide-react';
 
-export default function CafeCard({ cafe }: { cafe: Cafe }) {
+export default function CafeCard({ cafe }: { cafe: NearbyCafe }) {
+  // Format rating
+  const rating = typeof cafe.avg_rating === 'number' ? cafe.avg_rating.toFixed(1) : 'New';
+
+  // Format distance if available (convert meters to km)
+  const distance = cafe.dist_meters
+    ? (cafe.dist_meters / 1000).toFixed(1) + ' km'
+    : '';
+
   return (
-    <Link href={`/cafe/${cafe.id}`} className="block">
-      <div className="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-all group h-full flex flex-col">
-        <div className="aspect-[4/3] w-full relative overflow-hidden shrink-0">
-          <Image
-            src={cafe.images[0]}
-            alt={cafe.name}
-            fill
-            className="object-cover transform group-hover:scale-105 transition-transform duration-300"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-          <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm px-2.5 py-1 rounded-full text-xs font-bold text-[#065f46] shadow-sm flex items-center gap-1 z-10">
-            <span className="text-sm">{cafe.workScore.toFixed(1)}</span>
-            <span className="text-[10px] font-medium uppercase tracking-wide text-gray-500">Work Score</span>
-          </div>
+    <Link href={`/cafe/${cafe.slug}`} className="block group">
+      <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-gray-100 h-full flex flex-col">
+        {/* Image Section */}
+        <div className="relative h-48 w-full bg-gray-100">
+          {cafe.cover_image ? (
+            <Image
+              src={cafe.cover_image}
+              alt={cafe.name}
+              fill
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-gray-400">
+              <span className="text-sm">Chưa có ảnh</span>
+            </div>
+          )}
+
+          {/* Distance Badge */}
+          {distance && (
+            <div className="absolute bottom-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg text-xs font-medium text-gray-700 shadow-sm flex items-center gap-1">
+              <MapPin className="w-3 h-3 text-emerald-600" />
+              {distance}
+            </div>
+          )}
         </div>
+
+        {/* Content Section */}
         <div className="p-4 flex flex-col flex-grow">
-          <h3 className="font-bold text-lg text-[#1f2937] leading-tight mb-1 line-clamp-1">{cafe.name}</h3>
-          <div className="flex items-center gap-1 text-gray-500 mb-3">
-            <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-            <p className="text-xs truncate">{cafe.address}</p>
+          <div className="flex justify-between items-start mb-1">
+            <h3 className="font-bold text-gray-900 text-lg line-clamp-1 group-hover:text-emerald-700 transition-colors">
+              {cafe.name}
+            </h3>
+            <div className="flex items-center gap-1 bg-yellow-50 px-1.5 py-0.5 rounded-md">
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              <span className="text-sm font-bold text-gray-800">{rating}</span>
+            </div>
           </div>
 
-          <div className="flex items-center justify-between border-t border-gray-50 pt-3 mt-auto">
-            <div className="flex items-center gap-1.5">
-              <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span className="font-bold text-[#1f2937]">{cafe.rating}</span>
-              <span className="text-xs text-gray-400">({cafe.reviewsCount})</span>
-            </div>
-            <div className="flex gap-1">
-               {cafe.amenities.slice(0, 2).map((amenity) => (
-                 <span key={amenity.id} className="text-[10px] px-2 py-0.5 bg-gray-100 text-gray-600 rounded-full whitespace-nowrap">
-                   {amenity.name}
-                 </span>
-               ))}
-               {cafe.amenities.length > 2 && (
-                 <span className="text-[10px] px-2 py-0.5 bg-gray-50 text-gray-400 rounded-full whitespace-nowrap">
-                   +{cafe.amenities.length - 2}
-                 </span>
-               )}
-            </div>
+          <p className="text-sm text-gray-500 line-clamp-1 mb-3">
+            {cafe.address}
+            {cafe.district && `, ${cafe.district}`}
+          </p>
+
+          <div className="mt-auto pt-3 border-t border-gray-50 flex items-center justify-between text-xs text-gray-500">
+            <span>{cafe.total_reviews} đánh giá</span>
+            <span className="font-medium text-emerald-600">Mở cửa</span>
           </div>
         </div>
       </div>
