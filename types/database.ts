@@ -6,7 +6,7 @@ export type Json =
   | { [key: string]: Json | undefined }
   | Json[]
 
-export type Database = {
+export interface Database {
   public: {
     Tables: {
       profiles: {
@@ -246,9 +246,6 @@ export type Database = {
         ]
       }
     }
-    Views: {
-      [_ in never]: never
-    }
     Functions: {
       get_nearby_cafes: {
         Args: {
@@ -267,6 +264,33 @@ export type Database = {
           rating: number
           reviews_count: number
           dist_meters: number
+          latitude: number
+          longitude: number
+        }[]
+      }
+      search_cafes: {
+        Args: {
+          lat: number
+          long: number
+          radius_km: number
+          amenity_ids?: number[] | null
+          min_price?: number | null
+          max_price?: number | null
+          is_open?: boolean | null
+        }
+        Returns: {
+          id: string
+          name: string
+          slug: string
+          address: string
+          district: string
+          city: string
+          cover_image: string
+          rating: number
+          reviews_count: number
+          dist_meters: number
+          latitude: number
+          longitude: number
         }[]
       }
     }

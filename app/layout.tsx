@@ -1,15 +1,13 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin", "vietnamese"],
-});
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "WorkĐi - Tìm quán cafe làm việc lý tưởng",
-  description: "Nền tảng tìm kiếm không gian làm việc cho Digital Nomad tại Việt Nam",
+  title: "WorkĐi - Find Your Perfect Workspace",
+  description: "Discover the best cafes and coworking spaces for digital nomads.",
 };
 
 export default function RootLayout({
@@ -18,11 +16,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="vi">
-      <body
-        className={`${inter.variable} antialiased bg-background text-foreground`}
-      >
-        {children}
+    <html lang="en">
+      <body className={inter.className}>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );

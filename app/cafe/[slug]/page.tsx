@@ -9,19 +9,17 @@ import {
   Share2, Bookmark
 } from "lucide-react";
 import { useParams } from "next/navigation";
-// import dynamic from "next/dynamic"; // Disabled map for now
+import dynamic from "next/dynamic";
 import { getCafeBySlug } from "@/lib/api/cafes";
 
 // Define type based on the API return type
 type CafeDetail = NonNullable<Awaited<ReturnType<typeof getCafeBySlug>>>;
 
-// Dynamic Map Import - Disabled until location parsing is implemented
-/*
+// Dynamic Map Import
 const Map = dynamic(() => import("@/components/Map"), {
   ssr: false,
   loading: () => <div className="w-full h-48 bg-gray-100 animate-pulse rounded-xl" />
 });
-*/
 
 // Helper to get Icon Component
 const getAmenityIcon = (iconName: string | null) => {
@@ -182,8 +180,26 @@ export default function CafeDetailPage() {
           </div>
         </div>
 
-        {/* 5. Map Preview - Placeholder if location parsing isn't implemented */}
-        {/* We skip map for now if we don't have explicit lat/lng in the cafe object or need parsing */}
+        {/* 5. Map Preview */}
+        {cafe.latitude && cafe.longitude && (
+             <div className="mt-8">
+                <h2 className="text-lg font-bold text-gray-900 mb-4">Vị trí</h2>
+                <div className="h-48 w-full rounded-xl overflow-hidden border border-gray-200">
+                    <Map
+                        center={[cafe.latitude, cafe.longitude]}
+                        zoom={15}
+                        interactive={false}
+                        markers={[{
+                            id: cafe.id,
+                            name: cafe.name,
+                            latitude: cafe.latitude,
+                            longitude: cafe.longitude,
+                            address: cafe.address
+                        }]}
+                    />
+                </div>
+            </div>
+        )}
 
         {/* 6. Reviews Preview */}
         <div className="mt-8 mb-8">
